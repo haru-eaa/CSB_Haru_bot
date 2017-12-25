@@ -1,7 +1,11 @@
 import sys
 import math
 
-thrust = 100
+time_to_STOP = 3800
+
+def distance_calc(x1, y1, x2, y2):
+
+	return math.sqrt((x2-x1)**2 + (y2-y1)**2)
 
 while True:
 
@@ -9,4 +13,18 @@ while True:
     opponent_x, opponent_y = [int(i) for i in input().split()]
     #--------------------#  GATHER DATA  #--------------------#
 
+    disntance = distance_calc(x, y, next_checkpoint_x, next_checkpoint_y)
+    
+    if math.fabs(next_checkpoint_angle) >= 90:
+    	angle_modificator = 0
+    else:
+    	angle_modificator = 1
+
+
+    thrust = 100 * angle_modificator
+    
+    if disntance > 4000:
+        if math.fabs(next_checkpoint_angle) == 0:
+            thrust = "BOOST"
+    
     print(str(next_checkpoint_x) + " " + str(next_checkpoint_y) + " " + str(thrust))
