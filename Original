@@ -1,30 +1,35 @@
 import sys
 import math
+import numpy
 
-time_to_STOP = 3800
-
-def distance_calc(x1, y1, x2, y2):
-
-	return math.sqrt((x2-x1)**2 + (y2-y1)**2)
+timer = 0
+thrust = 100
+last_checkpoint_x = 0
+last_checkpoint_y = 0
 
 while True:
 
     x, y, next_checkpoint_x, next_checkpoint_y, next_checkpoint_dist, next_checkpoint_angle = [int(i) for i in input().split()]
     opponent_x, opponent_y = [int(i) for i in input().split()]
     #--------------------#  GATHER DATA  #--------------------#
-
-    disntance = distance_calc(x, y, next_checkpoint_x, next_checkpoint_y)
+    my_cord = numpy.array([x,y])
+    checkpoint = numpy.array([next_checkpoint_x, next_checkpoint_y])
     
-    if math.fabs(next_checkpoint_angle) >= 90:
-    	angle_modificator = 0
-    else:
-    	angle_modificator = 1
-
-
-    thrust = 100 * angle_modificator
     
-    if disntance > 4000:
-        if math.fabs(next_checkpoint_angle) == 0:
-            thrust = "BOOST"
     
-    print(str(next_checkpoint_x) + " " + str(next_checkpoint_y) + " " + str(thrust))
+    if last_checkpoint_x==0:
+        last_checkpoint_x = x
+        last_checkpoint_y = y
+
+    velocity = my_cord - numpy.array([last_checkpoint_x,last_checkpoint_y])
+
+    if (numpy.linalg.norm(my_cord+velocity - checkpoint)<500 or numpy.linalg.norm(my_cord+velocity*1.9 - checkpoint)<500 or numpy.linalg.norm(my_cord+velocity*2.8 - checkpoint)<400) and abs(next_checkpoint_angle)<50:
+        next_checkpoint_x=8000
+        next_checkpoint_y=4500
+    # print(distanse, file=sys.stderr)
+
+    print(str(next_checkpoint_x - (x - last_checkpoint_x)*3) + " " + str(next_checkpoint_y - (y - last_checkpoint_y)*3) + (" 100" if abs(next_checkpoint_angle)<90 else " 0"))
+
+    timer += 1
+    last_checkpoint_x = x
+    last_checkpoint_y = y
